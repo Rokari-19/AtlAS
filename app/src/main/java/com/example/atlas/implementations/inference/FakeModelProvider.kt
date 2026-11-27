@@ -2,10 +2,7 @@ package com.example.atlas.implementations.inference
 
 import com.example.atlas.core.inference.*
 import com.example.atlas.core.execution.*
-import com.example.atlas.core.intelligence.*
 import kotlinx.serialization.json.buildJsonObject
-import com.example.atlas.implementations.tools.*
-
 
 class FakeModelProvider: ModelProvider {
     override suspend fun initialize() {}
@@ -27,6 +24,7 @@ class FakeModelProvider: ModelProvider {
                             ToolCall(
                                 id = "call_001",
                                 name = "get_battery_status",
+                                description = "get current battery status",
                                 arguments = buildJsonObject {}
                             )
                         )
@@ -49,30 +47,4 @@ class FakeModelProvider: ModelProvider {
             )
         }
     }
-}
-
-
-fun main() {
-    val registry = ToolRegistry()
-
-    registry.register(
-        FakeBatteryStatusTool()
-    )
-
-    val provider = FakeModelProvider()
-
-    provider.initialize()
-
-    val agent = AgentRunner(
-        modelProvider = provider,
-        toolRegistry = registry
-    )
-
-    val response = agent.run(
-        AgentRequest(
-            message = "What's my current battery percentage?"
-        )
-    )
-
-    println(response.message)
 }
