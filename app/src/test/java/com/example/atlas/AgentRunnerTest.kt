@@ -39,4 +39,31 @@ class AgentRunnerTest{
 
         assertFalse(response.executedTools.first().isError)
     }
+
+    @Test
+    fun unsupportedRequest_doesNotExecuteTools() = runBlocking {
+
+        val registry = ToolRegistry()
+        registry.register(FakeBatteryStatusTool())
+
+        val provider = FakeModelProvider()
+
+        val agent = AgentRunner(
+            modelProvider = provider,
+            toolRegistry = registry
+        )
+
+        val response = agent.run(
+            AgentRequest(
+                message = "Tell me a joke."
+            )
+        )
+
+        assertEquals(
+            "I don't have a tool for this action yet",
+            response.message
+        )
+
+        assertEquals(0, response.executedTools.size)
+    }
 }
